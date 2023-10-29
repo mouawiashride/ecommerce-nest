@@ -5,26 +5,28 @@ import { UserService } from 'src/user/user.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { LocalStrategy } from './strategies/local-strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/user/entities/user.entity';
 import { JwtStrategy } from './strategies/jwt-strategy';
 import { RefreshJwtStrategy } from './strategies/refreshToken.strategy';
+import { config } from 'dotenv';
+import { UserModule } from 'src/user/user.module';
+config();
 
 @Module({
   providers: [
     AuthService,
-    UserService,
     LocalStrategy,
     JwtStrategy,
     RefreshJwtStrategy,
-    UserService,
   ],
   controllers: [AuthController],
   imports: [
-    TypeOrmModule.forFeature([User]),
+    UserModule,
     JwtModule.register({
       secret: `${process.env.jwt_secret}`,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '3600s' },
     }),
   ],
+  exports: [AuthService],
 })
 export class AuthModule {}
